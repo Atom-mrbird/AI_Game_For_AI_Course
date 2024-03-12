@@ -9,6 +9,7 @@ class Game:
         self.player_points = 0
         self.ai_points = 0
         self.current_player = "human"
+        self.winner = None
 
     def divide_by(self, divisor):
         if divisor == 2:
@@ -35,6 +36,7 @@ class Game:
             self.player_points += 2
 
     def game_over(self):
+        self.winner = "human" if self.player_points > self.ai_points else "ai"
         self.current_player = "human"
         self.bank += self.current_number
         self.current_number = 0
@@ -103,6 +105,7 @@ class Application(tk.Tk):
         self.current_number_label = tk.Label(self, text=f"Current number: {self.game.current_number}")
         self.current_number_label.pack()
 
+
         self.player_points_label = tk.Label(self, text=f"Player points: {self.game.player_points}")
         self.player_points_label.pack()
 
@@ -123,6 +126,8 @@ class Application(tk.Tk):
 
         self.ai_move_button = tk.Button(self.button_frame, text="AI move", command=self.ai_move)
         self.ai_move_button.grid(row=0, column=2)
+        self.winner_label = tk.Label(self, text="")
+        self.winner_label.pack()
 
     def divide_by_2(self):
         self.game.divide_by(2)
@@ -135,12 +140,21 @@ class Application(tk.Tk):
     def ai_move(self):
         self.game.ai_move()
         self.update_labels()
+        if self.game.winner is None:
+            self.game.ai_move()
+            self.update_labels()
+        else:
+            self.winner_label.config(text=f"Winner: {self.game.winner}")
 
     def update_labels(self):
         self.current_number_label.config(text=f"Current number: {self.game.current_number}")
         self.player_points_label.config(text=f"Player points: {self.game.player_points}")
         self.ai_points_label.config(text=f"AI points: {self.game.ai_points}")
         self.bank_label.config(text=f"Bank: {self.game.bank}")
+        if self.game.winner is None:
+            self.winner_label.config(text="")
+        else:
+            self.winner_label.config(text=f"Winner: {self.game.winner}")
 
 if __name__ == "__main__":
     app = Application()
