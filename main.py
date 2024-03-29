@@ -126,6 +126,9 @@ class Application(tk.Tk):
 
         self.ai_move_button = tk.Button(self.button_frame, text="AI move", command=self.ai_move)
         self.ai_move_button.grid(row=0, column=2)
+        #add the play again button
+        self.play_again_btn = tk.Button(self.button_frame, text="Play again", command=self.play_again, state=tk.DISABLED)
+        self.play_again_btn.grid(row=0, column=3)
         self.winner_label = tk.Label(self, text="")
         self.winner_label.pack()
 
@@ -145,7 +148,12 @@ class Application(tk.Tk):
             self.update_labels()
         else:
             self.winner_label.config(text=f"Winner: {self.game.winner}")
-
+    #add the play_again
+    def play_again(self):
+        self.game = Game()
+        self.update_labels()
+        self.play_again_btn.config(state=tk.DISABLED)
+    #updated that after ending the game btn is enable
     def update_labels(self):
         self.current_number_label.config(text=f"Current number: {self.game.current_number}")
         self.player_points_label.config(text=f"Player points: {self.game.player_points}")
@@ -155,6 +163,7 @@ class Application(tk.Tk):
             self.winner_label.config(text="")
         else:
             self.winner_label.config(text=f"Winner: {self.game.winner}")
+            self.play_again_btn.config(state=tk.NORMAL)
 
 if __name__ == "__main__":
     app = Application()
