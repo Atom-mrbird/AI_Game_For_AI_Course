@@ -1,5 +1,10 @@
-import tkinter as tk
+import customtkinter as ctk
+from PIL import Image, ImageTk
 import random
+
+ctk.set_appearance_mode("System")
+ctk.set_default_color_theme("blue")
+
 
 class Game:
     def __init__(self):
@@ -42,10 +47,7 @@ class Game:
         self.current_number = 0
 
     def switch_player(self):
-        if self.current_player == "human":
-            self.current_player = "ai"
-        else:
-            self.current_player = "human"
+        self.current_player = "ai" if self.current_player == "human" else "human"
 
     def alpha_beta_search(self, state, depth, alpha, beta, maximizing_player):
         if depth == 0 or state.current_number <= 10:
@@ -64,7 +66,6 @@ class Game:
                 if beta <= alpha:
                     break
             return max_eval
-
         else:
             min_eval = float("inf")
             for action in [2, 3]:
@@ -93,44 +94,82 @@ class Game:
                 best_action = action
         self.divide_by(best_action)
 
-class Application(tk.Tk):
+
+class Application(ctk.CTk):
     def __init__(self):
-        tk.Tk.__init__(self)
+        super().__init__()
         self.game = Game()
         self.title("Number Game")
-        self.geometry("400x300")
+        self.configure(bg="#2D2D2D")
+        self.resizable(False, False)
+
+        human_image = Image.open("human.png")
+        self.human_icon = ctk.CTkImage(light_image=human_image, dark_image=human_image, size=(50, 50))
+
+        ai_image = Image.open("robot.png")
+        self.ai_icon = ctk.CTkImage(light_image=ai_image, dark_image=ai_image, size=(50, 50))
+
         self.create_widgets()
 
     def create_widgets(self):
-        self.current_number_label = tk.Label(self, text=f"Current number: {self.game.current_number}")
-        self.current_number_label.pack()
+        label_options = {"text_color": "white", "bg_color": "#2D2D2D"}
+        button_options = {"fg_color": "#5B5B5B", "hover_color": "#3D3D3D", "text_color": "white", "bg_color": "#2D2D2D",
+                          "corner_radius": 10}
 
+        # Game Info Frame
+        self.game_info_frame = ctk.CTkFrame(self, bg_color="#2D2D2D")
+        self.game_info_frame.pack(pady=10, fill="x", padx=10)
 
-        self.player_points_label = tk.Label(self, text=f"Player points: {self.game.player_points}")
-        self.player_points_label.pack()
+        self.current_number_label = ctk.CTkLabel(self.game_info_frame,
+                                                 text=f"Current number: {self.game.current_number}", **label_options)
+        self.current_number_label.pack(pady=5)
 
-        self.ai_points_label = tk.Label(self, text=f"AI points: {self.game.ai_points}")
-        self.ai_points_label.pack()
+        # Afficher les points du joueur avec icône
+        self.player_points_frame = ctk.CTkFrame(self, bg_color="#2D2D2D")
+        self.player_points_frame.pack(pady=5, fill="x", padx=10)
+        self.player_icon_label = ctk.CTkLabel(self.player_points_frame, text="", image=self.human_icon,
+                                              bg_color="#2D2D2D")
+        self.player_icon_label.pack(side="left", padx=10)
+        self.player_points_label = ctk.CTkLabel(self.player_points_frame,
+                                                text=f"Player points: {self.game.player_points}", **label_options)
+        self.player_points_label.pack(side="left")
 
-        self.bank_label = tk.Label(self, text=f"Bank: {self.game.bank}")
-        self.bank_label.pack()
+        self.ai_points_frame = ctk.CTkFrame(self, bg_color="#2D2D2D")
+        self.ai_points_frame.pack(pady=5, fill="x", padx=10)
+        self.ai_icon_label = ctk.CTkLabel(self.ai_points_frame, text="", image=self.ai_icon, bg_color="#2D2D2D")
+        self.ai_icon_label.pack(side="left", padx=10)
+        self.ai_points_label = ctk.CTkLabel(self.ai_points_frame, text=f"AI points: {self.game.ai_points}",
+                                            **label_options)
+        self.ai_points_label.pack(side="left")
 
-        self.button_frame = tk.Frame(self)
-        self.button_frame.pack()
+        self.bank_label = ctk.CTkLabel(self.game_info_frame, text=f"Bank: {self.game.bank}", **label_options)
+        self.bank_label.pack(pady=5)
 
-        self.divide_by_2_button = tk.Button(self.button_frame, text="Divide by 2", command=self.divide_by_2)
-        self.divide_by_2_button.grid(row=0, column=0)
+        # Actions Frame
+        self.actions_frame = ctk.CTkFrame(self, bg_color="#2D2D2D")
+        self.actions_frame.pack(pady=20, fill="x", padx=10)
 
-        self.divide_by_3_button = tk.Button(self.button_frame, text="Divide by 3", command=self.divide_by_3)
-        self.divide_by_3_button.grid(row=0, column=1)
+        self.divide_by_2_button = ctk.CTkButton(self.actions_frame, text="Divide by 2", command=self.divide_by_2,
+                                                **button_options)
+        self.divide_by_2_button.pack(side="left", padx=10)
 
-        self.ai_move_button = tk.Button(self.button_frame, text="AI move", command=self.ai_move)
-        self.ai_move_button.grid(row=0, column=2)
-        #add the play again button
-        self.play_again_btn = tk.Button(self.button_frame, text="Play again", command=self.play_again, state=tk.DISABLED)
-        self.play_again_btn.grid(row=0, column=3)
-        self.winner_label = tk.Label(self, text="")
-        self.winner_label.pack()
+        self.divide_by_3_button = ctk.CTkButton(self.actions_frame, text="Divide by 3", command=self.divide_by_3,
+                                                **button_options)
+        self.divide_by_3_button.pack(side="left", padx=10)
+
+        self.ai_move_button = ctk.CTkButton(self.actions_frame, text="AI move", command=self.ai_move, **button_options)
+        self.ai_move_button.pack(side="left", padx=10)
+
+        self.play_again_btn = ctk.CTkButton(self.actions_frame, text="Play again", command=self.play_again,
+                                            state="disabled", **button_options)
+        self.play_again_btn.pack(side="left", padx=10)
+
+        # Status Frame
+        self.status_frame = ctk.CTkFrame(self, bg_color="#2D2D2D")
+        self.status_frame.pack(pady=10, fill="x", padx=10)
+
+        self.winner_label = ctk.CTkLabel(self.status_frame, text="", **label_options)
+        self.winner_label.pack(pady=5)
 
     def divide_by_2(self):
         self.game.divide_by(2)
@@ -143,27 +182,25 @@ class Application(tk.Tk):
     def ai_move(self):
         self.game.ai_move()
         self.update_labels()
-        if self.game.winner is None:
-            self.game.ai_move()
-            self.update_labels()
-        else:
-            self.winner_label.config(text=f"Winner: {self.game.winner}")
-    #add the play_again
+
     def play_again(self):
         self.game = Game()
         self.update_labels()
-        self.play_again_btn.config(state=tk.DISABLED)
-    #updated that after ending the game btn is enable
+        self.play_again_btn.configure(state=ctk.DISABLED)
+
     def update_labels(self):
-        self.current_number_label.config(text=f"Current number: {self.game.current_number}")
-        self.player_points_label.config(text=f"Player points: {self.game.player_points}")
-        self.ai_points_label.config(text=f"AI points: {self.game.ai_points}")
-        self.bank_label.config(text=f"Bank: {self.game.bank}")
-        if self.game.winner is None:
-            self.winner_label.config(text="")
+        self.current_number_label.configure(text=f"Current number: {self.game.current_number}")
+        self.player_points_label.configure(text=f"Player points: {self.game.player_points}")
+        self.ai_points_label.configure(text=f"AI points: {self.game.ai_points}")
+        self.bank_label.configure(text=f"Bank: {self.game.bank}")
+        if self.game.winner:
+            self.winner_label.configure(text=f"Winner: {self.game.winner}")
+            self.play_again_btn.configure(state=ctk.NORMAL)
         else:
-            self.winner_label.config(text=f"Winner: {self.game.winner}")
-            self.play_again_btn.config(state=tk.NORMAL)
+            self.winner_label.configure(text="")
+            self.play_again_btn.configure(
+                state=ctk.DISABLED)
+
 
 if __name__ == "__main__":
     app = Application()
