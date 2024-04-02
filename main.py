@@ -25,13 +25,6 @@ class GameTree:
         self.starter = ""
 
     def display_game_tree(self, node, divisor, level=0):
-        """
-        Affiche l'arbre de jeu en parcourant chaque nœud.
-
-        Args:
-        node (Node): Le nœud actuel à afficher.
-        level (int): Le niveau de profondeur du nœud dans l'arbre.
-        """
         if node is None:
             return
 
@@ -47,18 +40,6 @@ class GameTree:
         if level == 0:
             return None
         else:
-            """ if node.number <= 10:
-                if node.current_player == "human":
-                    if(dady == 2):
-                        node.child_div2 = Node(node.current_player, node.number, node.humain_points, node. ai_points + node.bank, 0, None, None)
-                    elif(dady == 3):
-                        node.child_div3 = Node(node.current_player, node.number, node.humain_points, node. ai_points + node.bank, 0, None, None)
-                else:
-                    if(dady == 2):
-                        node.child_div2 = Node(node.current_player, node.number, node.humain_points + node.bank, node.ai_points, 0, None, None)
-                    elif(dady == 3):
-                        node.child_div3 = Node(node.current_player, node.number, node.humain_points + node.bank, node.ai_points, 0, None, None)  """
-
             if node.number % 2 != 0 and node.number % 3 != 0:
                 if (dady == 2):
                     node.child_div2 = None
@@ -128,17 +109,6 @@ def heuristic_function(node: Node):
 
 
 def min_max(node, depth, maximizing_player):
-    """
-    Implémente l'algorithme Min-Max pour déterminer le meilleur mouvement possible.
-
-    Args:
-    node (Node): Le nœud actuel à explorer.
-    depth (int): La profondeur maximale à laquelle explorer l'arbre de jeu.
-    maximizing_player (bool): True si le joueur actuel est l'IA (maximisant), False sinon.
-
-    Returns:
-    int: La valeur heuristique du meilleur mouvement trouvé.
-    """
     if depth == 0 or node.child_div2 is None and node.child_div3 is None:
         return (heuristic_function(node), node)
 
@@ -165,19 +135,6 @@ def min_max(node, depth, maximizing_player):
 
 
 def alpha_beta_search(node, depth, alpha, beta, maximizing_player):
-    """
-    Implémente l'algorithme Alpha-Beta Pruning pour déterminer le meilleur mouvement possible.
-
-    Args:
-    node (Node): Le nœud actuel à explorer.
-    depth (int): La profondeur maximale à laquelle explorer l'arbre de jeu.
-    alpha (float): La meilleure valeur minimale connue jusqu'à présent.
-    beta (float): La meilleure valeur maximale connue jusqu'à présent.
-    maximizing_player (bool): True si le joueur actuel est l'IA (maximisant), False sinon.
-
-    Returns:
-    Tuple[int, Node]: La valeur heuristique du meilleur mouvement trouvé et le nœud correspondant.
-    """
     if depth == 0 or (node.child_div2 is None and node.child_div3 is None):
         return (heuristic_function(node), node)
 
@@ -207,18 +164,6 @@ def alpha_beta_search(node, depth, alpha, beta, maximizing_player):
                 if beta <= alpha:
                     break
         return (value, best_node)
-
-
-""" gameTree = GameTree()
-gameTree.RootNode = gameTree.build_gameTree("human", 12123443832, 0, 0, 0, 3)
-gameTree.display_game_tree(gameTree.RootNode, 0)
-
-best_value = alpha_beta_search(gameTree.RootNode, 3, float('-inf'), float('inf'), True)
-print("La valeur heuristique du meilleur mouvement trouvé est :", best_value)
-
-best_value = min_max(gameTree.RootNode, 3, True)
-print("La valeur heuristique du meilleur mouvement trouvé est :", best_value) """
-
 
 class Game:
     def __init__(self):
